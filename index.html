@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Half Baked Studio — Production House, New Delhi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Mono:wght@300;400&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0e1117;
+  --bg2:#141820;
+  --bg3:#1a1f2b;
+  --gold:#c8a95b;
+  --gold-light:#e2c97e;
+  --gold-dim:rgba(200,169,91,0.15);
+  --text:#ede9e0;
+  --muted:#5e5a55;
+  --border:rgba(200,169,91,0.14);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-weight:300;overflow-x:hidden;cursor:none}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.4}
+
+#cur{position:fixed;width:7px;height:7px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);transition:width .25s,height .25s,background .25s}
+#cur-r{position:fixed;width:34px;height:34px;border:1px solid rgba(200,169,91,.45);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s,border-color .3s}
+body.hov #cur{width:12px;height:12px;background:var(--gold-light)}
+body.hov #cur-r{width:52px;height:52px;border-color:rgba(200,169,91,.8)}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:center;justify-content:space-between;padding:26px 56px;transition:background .4s}
+nav.stuck{background:rgba(14,17,23,.93);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.n-logo{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:.28em;color:var(--gold);text-decoration:none}
+.n-links{display:flex;gap:44px;list-style:none}
+.n-links a{text-decoration:none;color:var(--muted);font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;transition:color .25s;position:relative}
+.n-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--gold);transition:width .3s}
+.n-links a:hover{color:var(--gold)}
+.n-links a:hover::after{width:100%}
+.n-cta{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--bg);background:var(--gold);padding:11px 28px;text-decoration:none;transition:background .3s}
+.n-cta:hover{background:var(--gold-light)}
+
+#hero{min-height:100vh;display:grid;grid-template-rows:1fr auto;overflow:hidden;background:radial-gradient(ellipse 70% 55% at 50% 90%,rgba(200,169,91,.07) 0%,transparent 70%)}
+.hero-body{display:flex;flex-direction:column;justify-content:center;padding:140px 56px 60px}
+.h-eyebrow{font-size:.6rem;letter-spacing:.42em;color:var(--gold);text-transform:uppercase;margin-bottom:32px;opacity:0;animation:fu .8s .3s forwards}
+.h-title{font-family:'Cormorant Garamond',serif;font-size:clamp(5rem,13vw,12rem);font-weight:300;line-height:.88;letter-spacing:-.02em;opacity:0;animation:fu 1s .5s forwards}
+.h-title .italic{font-style:italic;color:var(--gold)}
+.h-row{display:flex;align-items:flex-end;justify-content:space-between;margin-top:52px;opacity:0;animation:fu .8s .9s forwards}
+.h-desc{font-size:.72rem;line-height:1.9;color:var(--muted);max-width:380px;letter-spacing:.04em}
+.h-btns{display:flex;gap:16px}
+.btn-gold{display:inline-block;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--bg);background:var(--gold);padding:16px 40px;text-decoration:none;transition:background .3s,transform .25s}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-2px)}
+.btn-ghost{display:inline-block;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);border:1px solid var(--border);padding:16px 40px;text-decoration:none;transition:border-color .3s,color .3s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold-light)}
+.hero-bottom{display:flex;align-items:center;justify-content:space-between;padding:28px 56px;border-top:1px solid var(--border);opacity:0;animation:fu .8s 1.2s forwards}
+.h-stats{display:flex;gap:64px}
+.h-stat-num{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--gold);line-height:1}
+.h-stat-lbl{font-size:.55rem;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;margin-top:2px}
+.h-scroll{display:flex;align-items:center;gap:12px;font-size:.55rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+.scroll-bar{width:40px;height:1px;background:linear-gradient(to right,var(--gold),transparent)}
+
+.ticker-wrap{background:var(--gold);padding:13px 0;overflow:hidden}
+.ticker-inner{display:flex;width:max-content;animation:tk 26s linear infinite}
+.ticker-inner:hover{animation-play-state:paused}
+.tk-item{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.22em;color:var(--bg);padding:0 28px;white-space:nowrap}
+.tk-sep{color:rgba(14,17,23,.3);padding:0 6px}
+
+#about-strip{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.as-left{padding:90px 56px;border-right:1px solid var(--border)}
+.as-right{padding:90px 56px;display:flex;flex-direction:column;justify-content:center}
+.as-right p{font-family:'Cormorant Garamond',serif;font-size:1.65rem;font-weight:300;line-height:1.55;margin-bottom:28px}
+.as-right .sub-p{font-size:.68rem;line-height:2;color:var(--muted);letter-spacing:.04em}
+.lbl{font-size:.58rem;letter-spacing:.38em;color:var(--gold);text-transform:uppercase;margin-bottom:36px;display:flex;align-items:center;gap:14px}
+.lbl::after{content:'';flex:1;max-width:120px;height:1px;background:var(--border)}
+
+.reel-box{width:100%;aspect-ratio:16/8;background:var(--bg3);border:1px solid var(--border);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.reel-lines{position:absolute;inset:0;background-image:linear-gradient(rgba(200,169,91,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(200,169,91,.04) 1px,transparent 1px);background-size:48px 48px}
+.reel-center{position:relative;z-index:2;text-align:center}
+.reel-play{width:74px;height:74px;border:1px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;animation:pulse 3s infinite;transition:background .3s,transform .3s;cursor:none}
+.reel-play:hover{background:var(--gold);transform:scale(1.08)}
+.reel-play svg{margin-left:5px}
+.reel-title{font-family:'Bebas Neue',sans-serif;font-size:5rem;color:rgba(200,169,91,.06);position:absolute;bottom:20px;left:40px;letter-spacing:.1em;pointer-events:none}
+.reel-tag{position:absolute;top:24px;right:32px;font-size:.55rem;letter-spacing:.28em;color:var(--muted);text-transform:uppercase}
+
+#services{padding:100px 56px}
+.svc-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:64px}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,4.5vw,4rem);font-weight:300;line-height:.95}
+.sec-title em{color:var(--gold);font-style:italic}
+.svc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.svc-card{background:var(--bg2);padding:48px 32px 40px;border:1px solid transparent;position:relative;overflow:hidden;transition:border-color .35s,transform .35s}
+.svc-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.22,1,.36,1)}
+.svc-card:hover{border-color:var(--border);transform:translateY(-5px)}
+.svc-card:hover::after{transform:scaleX(1)}
+.svc-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--gold-dim);margin-bottom:18px;transition:color .35s}
+.svc-card:hover .svc-num{color:rgba(200,169,91,.25)}
+.svc-name{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;margin-bottom:14px}
+.svc-desc{font-size:.64rem;line-height:2;color:var(--muted);letter-spacing:.04em;margin-bottom:20px}
+.svc-list{list-style:none;display:flex;flex-direction:column;gap:7px}
+.svc-list li{font-size:.6rem;color:var(--muted);letter-spacing:.08em;padding-left:14px;position:relative}
+.svc-list li::before{content:'→';position:absolute;left:0;color:var(--gold);font-size:.55rem}
+
+#reel{padding:0 56px 100px}
+
+#work{padding:100px 56px;background:var(--bg2)}
+.work-filter{display:flex;gap:24px;margin-bottom:48px;flex-wrap:wrap}
+.wf-btn{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);background:transparent;border:1px solid var(--border);padding:9px 22px;cursor:none;transition:all .25s}
+.wf-btn.active,.wf-btn:hover{color:var(--gold);border-color:var(--gold)}
+.work-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.w-item{position:relative;overflow:hidden;cursor:none}
+.w-item:nth-child(1){grid-column:span 2}
+.w-visual{width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:transform .6s cubic-bezier(.22,1,.36,1)}
+.w-item:nth-child(1) .w-visual{aspect-ratio:16/9}
+.w-item:hover .w-visual{transform:scale(1.04)}
+.w-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(14,17,23,.95) 0%,transparent 55%);opacity:0;transition:opacity .4s;display:flex;align-items:flex-end;padding:24px;z-index:2}
+.w-item:hover .w-overlay{opacity:1}
+.w-info h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300}
+.w-info .w-cat{font-size:.56rem;letter-spacing:.22em;color:var(--gold);text-transform:uppercase}
+.w-tag{position:absolute;top:14px;left:14px;font-size:.52rem;letter-spacing:.2em;color:var(--gold);border:1px solid rgba(200,169,91,.35);padding:4px 9px;z-index:3;text-transform:uppercase}
+
+#process{padding:100px 56px;border-top:1px solid var(--border)}
+.proc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin-top:64px}
+.proc-step{padding:44px 28px;background:var(--bg2);border:1px solid transparent;position:relative;transition:border-color .3s}
+.proc-step:hover{border-color:var(--border)}
+.proc-arrow{position:absolute;top:50%;right:-1px;transform:translateY(-50%);color:var(--gold);font-size:.7rem;z-index:1}
+.proc-step:last-child .proc-arrow{display:none}
+.proc-n{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;color:var(--gold-dim);line-height:1;margin-bottom:20px}
+.proc-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;margin-bottom:10px}
+.proc-desc{font-size:.61rem;line-height:1.9;color:var(--muted);letter-spacing:.04em}
+
+#why{padding:100px 56px;background:var(--bg2);border-top:1px solid var(--border)}
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.why-list{display:flex;flex-direction:column;gap:0}
+.why-item{padding:28px 0;border-bottom:1px solid var(--border);display:flex;gap:24px;align-items:flex-start;transition:padding-left .3s}
+.why-item:hover{padding-left:12px}
+.why-item:first-child{border-top:1px solid var(--border)}
+.wi-num{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gold);font-style:italic;min-width:32px}
+.wi-body h4{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:300;margin-bottom:6px}
+.wi-body p{font-size:.62rem;line-height:1.9;color:var(--muted);letter-spacing:.04em}
+.why-visual-area{position:relative;min-height:500px;display:flex;align-items:center;justify-content:center}
+
+#formats{padding:100px 56px;border-top:1px solid var(--border)}
+.fmt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:64px}
+.fmt-card{background:var(--bg2);padding:48px 36px;border:1px solid transparent;transition:border-color .35s,transform .35s;position:relative;overflow:hidden}
+.fmt-card:hover{border-color:var(--border);transform:translateY(-4px)}
+.fmt-title{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;margin-bottom:8px}
+.fmt-sub{font-size:.6rem;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:16px}
+.fmt-desc{font-size:.64rem;line-height:2;color:var(--muted);letter-spacing:.03em;margin-bottom:24px}
+.fmt-specs{display:flex;flex-direction:column;gap:6px}
+.fmt-spec{display:flex;justify-content:space-between;font-size:.58rem;color:var(--muted);border-bottom:1px solid var(--border);padding-bottom:6px;letter-spacing:.06em}
+.fmt-spec span:last-child{color:var(--text)}
+
+#gear{padding:100px 56px;background:var(--bg2);border-top:1px solid var(--border)}
+.gear-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:64px}
+.gear-card{padding:36px 28px;background:var(--bg);border:1px solid transparent;transition:border-color .3s}
+.gear-card:hover{border-color:var(--border)}
+.gear-cat{font-size:.55rem;letter-spacing:.28em;color:var(--gold);text-transform:uppercase;margin-bottom:18px}
+.gear-items{display:flex;flex-direction:column;gap:8px}
+.gear-item{font-size:.64rem;color:var(--muted);letter-spacing:.06em;padding:7px 0;border-bottom:1px solid rgba(200,169,91,.07);display:flex;align-items:center;gap:8px}
+.gear-dot{width:4px;height:4px;background:var(--gold);border-radius:50%;flex-shrink:0}
+
+.marquee-outer{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:18px 0}
+.marquee-track{display:flex;width:max-content;animation:tk 35s linear infinite}
+.marquee-track:hover{animation-play-state:paused}
+.m-item{display:flex;align-items:center;gap:20px;padding:0 48px;border-right:1px solid var(--border);flex-shrink:0}
+.m-item-n{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--gold-dim)}
+.m-item h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;white-space:nowrap}
+.m-item p{font-size:.57rem;color:var(--muted);letter-spacing:.1em;white-space:nowrap}
+
+#testimonials{padding:100px 56px;border-top:1px solid var(--border)}
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:64px}
+.test-card{background:var(--bg2);padding:40px 32px;border:1px solid transparent;transition:border-color .35s}
+.test-card:hover{border-color:var(--border)}
+.test-quote{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-style:italic;font-weight:300;line-height:1.65;margin-bottom:28px;color:var(--text)}
+.test-quote::before{content:'\201C';color:var(--gold);font-size:2rem;line-height:0;vertical-align:-.5em;margin-right:4px}
+.test-author{display:flex;align-items:center;gap:14px}
+.test-ava{width:38px;height:38px;border-radius:50%;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--gold);font-style:italic;flex-shrink:0}
+.test-name{font-size:.62rem;letter-spacing:.1em;color:var(--text)}
+.test-co{font-size:.55rem;color:var(--muted);letter-spacing:.1em;margin-top:2px}
+
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.sb-item{padding:52px 40px;border-right:1px solid var(--border);position:relative;overflow:hidden}
+.sb-item:last-child{border-right:none}
+.sb-item::before{content:'';position:absolute;inset:0;background:var(--gold-dim);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.sb-item:hover::before{transform:scaleX(1)}
+.sb-n{font-family:'Cormorant Garamond',serif;font-size:3.2rem;font-weight:300;color:var(--gold);line-height:1;position:relative;z-index:1}
+.sb-lbl{font-size:.58rem;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;margin-top:6px;position:relative;z-index:1}
+
+#contact{padding:100px 56px;display:grid;grid-template-columns:1fr 1.1fr;gap:80px;align-items:start}
+.ct-left .big{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,4vw,3.8rem);font-weight:300;line-height:1.05;margin-bottom:40px}
+.ct-left .big em{color:var(--gold);font-style:italic}
+.ct-detail{display:flex;flex-direction:column;gap:28px;margin-bottom:48px}
+.ct-row .ct-lbl{font-size:.54rem;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;margin-bottom:5px}
+.ct-row a,.ct-row span{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;color:var(--text);text-decoration:none;transition:color .25s;display:block}
+.ct-row a:hover{color:var(--gold)}
+.working-hrs{background:var(--bg2);padding:28px 32px;border:1px solid var(--border)}
+.wh-title{font-size:.58rem;letter-spacing:.28em;color:var(--gold);text-transform:uppercase;margin-bottom:16px}
+.wh-row{display:flex;justify-content:space-between;font-size:.62rem;color:var(--muted);padding:7px 0;border-bottom:1px solid var(--border)}
+.wh-row:last-child{border-bottom:none}
+.wh-row span:last-child{color:var(--text)}
+.ct-form{display:flex;flex-direction:column;gap:22px}
+.fg label{display:block;font-size:.55rem;letter-spacing:.28em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.fg input,.fg textarea,.fg select{width:100%;background:transparent;border:none;border-bottom:1px solid rgba(200,169,91,.22);padding:11px 0;color:var(--text);font-family:'DM Mono',monospace;font-size:.74rem;font-weight:300;outline:none;transition:border-color .3s;appearance:none}
+.fg select option{background:var(--bg)}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--gold)}
+.fg textarea{resize:none;height:90px}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.btn-submit{background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;padding:17px 44px;cursor:none;transition:background .3s,color .3s;align-self:flex-start}
+.btn-submit:hover{background:var(--gold);color:var(--bg)}
+
+footer{border-top:1px solid var(--border);padding:36px 56px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:40px}
+.f-logo{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.25em;color:var(--gold)}
+.f-copy{font-size:.57rem;color:var(--muted);letter-spacing:.1em;text-align:center}
+.f-links{display:flex;gap:28px;justify-content:flex-end}
+.f-links a{font-size:.57rem;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;transition:color .25s}
+.f-links a:hover{color:var(--gold)}
+
+.rv{opacity:0;transform:translateY(36px);transition:opacity .85s cubic-bezier(.22,1,.36,1),transform .85s cubic-bezier(.22,1,.36,1)}
+.rv.vis{opacity:1;transform:translateY(0)}
+.rv-d1{transition-delay:.1s}.rv-d2{transition-delay:.2s}.rv-d3{transition-delay:.3s}.rv-d4{transition-delay:.4s}
+
+@keyframes fu{to{opacity:1;transform:translateY(0)}}
+@keyframes tk{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(200,169,91,.3)}50%{box-shadow:0 0 0 18px rgba(200,169,91,0)}}
+
+@media(max-width:1000px){
+  nav{padding:20px 24px}.n-links{display:none}
+  #about-strip{grid-template-columns:1fr}.as-left{border-right:none;border-bottom:1px solid var(--border)}
+  .svc-grid,.proc-grid,.fmt-grid,.gear-grid,.test-grid{grid-template-columns:1fr 1fr}
+  .stats-bar{grid-template-columns:1fr 1fr}
+  .why-grid{grid-template-columns:1fr}
+  #contact{grid-template-columns:1fr;padding:80px 24px;gap:60px}
+  footer{grid-template-columns:1fr;gap:16px;padding:28px 24px}
+  .f-copy,.f-links{text-align:left;justify-content:flex-start}
+  #services,#reel,#work,#process,#why,#formats,#gear,#testimonials{padding-left:24px;padding-right:24px}
+  .hero-body{padding:120px 24px 50px}.hero-bottom{padding:24px}
+  .h-row{flex-direction:column;align-items:flex-start;gap:32px}
+  .h-stats{gap:36px}
+  .work-grid{grid-template-columns:1fr 1fr}.w-item:nth-child(1){grid-column:span 2}
+}
+@media(max-width:600px){
+  .svc-grid,.proc-grid,.fmt-grid,.gear-grid,.test-grid,.work-grid{grid-template-columns:1fr}
+  .w-item:nth-child(1){grid-column:span 1}
+  .stats-bar{grid-template-columns:1fr 1fr}
+  .fg-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<nav id="nav">
+  <a href="#" class="n-logo">Half Baked Studio</a>
+  <ul class="n-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#formats">Formats</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#why">Studio</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="n-cta">Start a Project</a>
+</nav>
+
+<section id="hero">
+  <div class="hero-body">
+    <p class="h-eyebrow">Production Studio &nbsp;·&nbsp; New Delhi &nbsp;·&nbsp; Est. 2023</p>
+    <h1 class="h-title">Half<br><span class="italic">Baked</span><br>Studio</h1>
+    <div class="h-row">
+      <p class="h-desc">We conceptualise, produce and deliver cinematic content for brands, agencies and independent creators. Ads, reels, short films and social posts — engineered to move people.</p>
+      <div class="h-btns">
+        <a href="#work" class="btn-gold">View Our Work</a>
+        <a href="#reel" class="btn-ghost">Watch Reel</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-bottom">
+    <div class="h-stats">
+      <div><div class="h-stat-num">50+</div><div class="h-stat-lbl">Projects Delivered</div></div>
+      <div><div class="h-stat-num">30+</div><div class="h-stat-lbl">Brand Partners</div></div>
+      <div><div class="h-stat-num">4K</div><div class="h-stat-lbl">Max Resolution</div></div>
+    </div>
+    <div class="h-scroll"><div class="scroll-bar"></div><span>Scroll to Explore</span></div>
+  </div>
+</section>
+
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="ticker">
+    <span class="tk-item">Ad Films<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Instagram Reels<span class="tk-sep">✦</span></span>
+    <span class="tk-item">YouTube Shorts<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Short Films<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Brand Identity Films<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Narrative Films<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Product Shoots<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Social Posts<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Motion Graphics<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Color Grading<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Sound Design<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Post Production<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Ad Films<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Instagram Reels<span class="tk-sep">✦</span></span>
+    <span class="tk-item">YouTube Shorts<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Short Films<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Brand Identity Films<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Narrative Films<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Product Shoots<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Social Posts<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Motion Graphics<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Color Grading<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Sound Design<span class="tk-sep">✦</span></span>
+    <span class="tk-item">Post Production<span class="tk-sep">✦</span></span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about-strip">
+  <div class="as-left rv">
+    <svg viewBox="0 0 460 380" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:420px">
+      <rect x="20" y="50" width="54" height="280" rx="4" stroke="rgba(200,169,91,0.2)" stroke-width="1.5" fill="rgba(200,169,91,0.03)"/>
+      <rect x="28" y="66" width="38" height="28" rx="2" stroke="rgba(200,169,91,0.3)" stroke-width="1" fill="rgba(200,169,91,0.06)"/>
+      <rect x="28" y="106" width="38" height="28" rx="2" stroke="rgba(200,169,91,0.3)" stroke-width="1" fill="rgba(200,169,91,0.06)"/>
+      <rect x="28" y="146" width="38" height="28" rx="2" stroke="rgba(200,169,91,0.3)" stroke-width="1" fill="rgba(200,169,91,0.06)"/>
+      <rect x="28" y="186" width="38" height="28" rx="2" stroke="rgba(200,169,91,0.3)" stroke-width="1" fill="rgba(200,169,91,0.06)"/>
+      <rect x="28" y="226" width="38" height="28" rx="2" stroke="rgba(200,169,91,0.3)" stroke-width="1" fill="rgba(200,169,91,0.06)"/>
+      <rect x="28" y="266" width="38" height="28" rx="2" stroke="rgba(200,169,91,0.3)" stroke-width="1" fill="rgba(200,169,91,0.06)"/>
+      <rect x="100" y="120" width="240" height="160" rx="12" stroke="rgba(200,169,91,0.6)" stroke-width="1.8" fill="rgba(200,169,91,0.04)"/>
+      <circle cx="220" cy="200" r="58" stroke="rgba(200,169,91,0.5)" stroke-width="1.5" fill="rgba(200,169,91,0.04)"/>
+      <circle cx="220" cy="200" r="42" stroke="rgba(200,169,91,0.35)" stroke-width="1.2" fill="rgba(200,169,91,0.03)"/>
+      <circle cx="220" cy="200" r="26" stroke="rgba(200,169,91,0.55)" stroke-width="1.2" fill="rgba(200,169,91,0.08)"/>
+      <circle cx="220" cy="200" r="10" fill="rgba(200,169,91,0.35)"/>
+      <circle cx="212" cy="192" r="3" fill="rgba(255,255,255,0.15)"/>
+      <rect x="286" y="125" width="46" height="34" rx="4" stroke="rgba(200,169,91,0.4)" stroke-width="1.2" fill="rgba(200,169,91,0.04)"/>
+      <rect x="148" y="104" width="80" height="20" rx="4" stroke="rgba(200,169,91,0.3)" stroke-width="1.2" fill="rgba(200,169,91,0.04)"/>
+      <circle cx="310" cy="178" r="8" stroke="rgba(200,169,91,0.5)" stroke-width="1.2" fill="rgba(200,169,91,0.12)"/>
+      <circle cx="156" cy="155" r="14" stroke="rgba(200,169,91,0.3)" stroke-width="1" fill="rgba(200,169,91,0.04)"/>
+      <circle cx="156" cy="155" r="5" fill="rgba(200,169,91,0.2)"/>
+      <rect x="386" y="50" width="54" height="280" rx="4" stroke="rgba(200,169,91,0.2)" stroke-width="1.5" fill="rgba(200,169,91,0.03)"/>
+      <rect x="394" y="66" width="38" height="28" rx="2" stroke="rgba(200,169,91,0.3)" stroke-width="1" fill="rgba(200,169,91,0.06)"/>
+      <rect x="394" y="106" width="38" height="28" rx="2" stroke="rgba(200,169,91,0.3)" stroke-width="1" fill="rgba(200,169,91,0.06)"/>
+      <rect x="394" y="146" width="38" height="28" rx="2" stroke="rgba(200,169,91,0.3)" stroke-width="1" fill="rgba(200,169,91,0.06)"/>
+      <rect x="394" y="186" width="38" height="28" rx="2" stroke="rgba(200,169,91,0.3)" stroke-width="1" fill="rgba(200,169,91,0.06)"/>
+      <rect x="394" y="226" width="38" height="28" rx="2" stroke="rgba(200,169,91,0.3)" stroke-width="1" fill="rgba(200,169,91,0.06)"/>
+      <rect x="394" y="266" width="38" height="28" rx="2" stroke="rgba(200,169,91,0.3)" stroke-width="1" fill="rgba(200,169,91,0.06)"/>
+      <line x1="220" y1="120" x2="80" y2="20" stroke="rgba(200,169,91,0.05)" stroke-width="1"/>
+      <line x1="220" y1="120" x2="360" y2="20" stroke="rgba(200,169,91,0.05)" stroke-width="1"/>
+      <text x="152" y="358" font-family="'Bebas Neue',sans-serif" font-size="13" fill="rgba(200,169,91,0.2)" letter-spacing="6">HALF BAKED STUDIO</text>
+    </svg>
+  </div>
+  <div class="as-right">
+    <div class="lbl rv">Who We Are</div>
+    <p class="rv rv-d1">We are a New Delhi production studio that believes every frame should earn its place on screen.</p>
+    <p class="sub-p rv rv-d2">Half Baked Studio was born from the conviction that great stories don't need enormous budgets — they need the right creative team. Founded by Arjit Jha, we've built our reputation on delivering cinematic quality for brands of every size: from emerging D2C startups looking for their first ad film, to established companies refreshing their visual identity.<br><br>Our work spans 30-second performance ads engineered for conversion, festival-calibre short films, platform-native reels and social content that builds communities rather than just chasing impressions. Every project starts with a question: <em style="color:var(--gold);font-style:italic">What does this story need to become unforgettable?</em></p>
+    <div style="width:44px;height:1px;background:var(--gold);margin:28px 0" class="rv rv-d3"></div>
+    <div class="sub-p rv rv-d4" style="color:var(--muted);font-size:.62rem;line-height:2">
+      <strong style="color:var(--gold);font-weight:400">Arjit Jha</strong> &nbsp;/&nbsp; Partner<br>
+      R-10, Ansal Chamber-2, Bhikaji Cama Place, New Delhi<br>
+      halfbaked.mainn@gmail.com
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="svc-header">
+    <div>
+      <div class="lbl rv">What We Do</div>
+      <h2 class="sec-title rv rv-d1">Services <em>built</em><br>for the screen</h2>
+    </div>
+  </div>
+  <div class="svc-grid">
+    <div class="svc-card rv rv-d1">
+      <div class="svc-num">01</div>
+      <svg style="margin-bottom:24px" width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <rect x="4" y="14" width="36" height="26" rx="3" stroke="#c8a95b" stroke-width="1.3"/>
+        <rect x="4" y="6" width="36" height="10" rx="2" stroke="#c8a95b" stroke-width="1.3"/>
+        <line x1="12" y1="6" x2="10" y2="16" stroke="#c8a95b" stroke-width="1.3"/>
+        <line x1="20" y1="6" x2="18" y2="16" stroke="#c8a95b" stroke-width="1.3"/>
+        <line x1="28" y1="6" x2="26" y2="16" stroke="#c8a95b" stroke-width="1.3"/>
+        <circle cx="22" cy="30" r="5" stroke="#c8a95b" stroke-width="1.3"/>
+        <circle cx="22" cy="30" r="2" fill="#c8a95b" opacity=".6"/>
+      </svg>
+      <h3 class="svc-name">Ad Films</h3>
+      <p class="svc-desc">Brand storytelling that commands attention and drives action. We handle the full pipeline — strategy, scripting, production and delivery.</p>
+      <ul class="svc-list">
+        <li>TVC &amp; Digital Commercials</li>
+        <li>Product Launch Films</li>
+        <li>Performance Ads (Meta, YouTube)</li>
+        <li>Corporate Films &amp; Testimonials</li>
+        <li>Event Highlight Films</li>
+      </ul>
+    </div>
+    <div class="svc-card rv rv-d2">
+      <div class="svc-num">02</div>
+      <svg style="margin-bottom:24px" width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <rect x="10" y="4" width="24" height="36" rx="4" stroke="#c8a95b" stroke-width="1.3"/>
+        <rect x="14" y="8" width="16" height="24" rx="2" stroke="#c8a95b" stroke-width="1.1" fill="rgba(200,169,91,0.07)"/>
+        <circle cx="22" cy="37" r="1.5" fill="#c8a95b" opacity=".5"/>
+        <path d="M18 18l8 2-8 4V18z" stroke="#c8a95b" stroke-width="1.1" stroke-linejoin="round"/>
+      </svg>
+      <h3 class="svc-name">Reels &amp; Shorts</h3>
+      <p class="svc-desc">Vertical-first content engineered for virality. Native storytelling for Instagram Reels, YouTube Shorts and Stories.</p>
+      <ul class="svc-list">
+        <li>Instagram Reels (9:16)</li>
+        <li>YouTube Shorts</li>
+        <li>Transition &amp; Hook Reels</li>
+        <li>Behind-the-Scenes Content</li>
+        <li>Creator Collaboration Reels</li>
+      </ul>
+    </div>
+    <div class="svc-card rv rv-d3">
+      <div class="svc-num">03</div>
+      <svg style="margin-bottom:24px" width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <circle cx="22" cy="22" r="16" stroke="#c8a95b" stroke-width="1.3"/>
+        <circle cx="22" cy="22" r="5" stroke="#c8a95b" stroke-width="1.3" fill="rgba(200,169,91,0.1)"/>
+        <circle cx="22" cy="10" r="2.5" stroke="#c8a95b" stroke-width="1.1" fill="rgba(200,169,91,0.07)"/>
+        <circle cx="22" cy="34" r="2.5" stroke="#c8a95b" stroke-width="1.1" fill="rgba(200,169,91,0.07)"/>
+        <circle cx="10" cy="22" r="2.5" stroke="#c8a95b" stroke-width="1.1" fill="rgba(200,169,91,0.07)"/>
+        <circle cx="34" cy="22" r="2.5" stroke="#c8a95b" stroke-width="1.1" fill="rgba(200,169,91,0.07)"/>
+      </svg>
+      <h3 class="svc-name">Short Films</h3>
+      <p class="svc-desc">Narrative-driven productions with cinematic scope. From personal stories to brand documentaries — films that live beyond the feed.</p>
+      <ul class="svc-list">
+        <li>Narrative Short Films (5–30 min)</li>
+        <li>Documentary Shorts</li>
+        <li>Brand Documentaries</li>
+        <li>Festival Submissions</li>
+        <li>Music Videos</li>
+      </ul>
+    </div>
+    <div class="svc-card rv rv-d4">
+      <div class="svc-num">04</div>
+      <svg style="margin-bottom:24px" width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <rect x="4" y="4" width="16" height="16" rx="3" stroke="#c8a95b" stroke-width="1.3" fill="rgba(200,169,91,0.06)"/>
+        <rect x="24" y="4" width="16" height="16" rx="3" stroke="#c8a95b" stroke-width="1.3" fill="rgba(200,169,91,0.06)"/>
+        <rect x="4" y="24" width="16" height="16" rx="3" stroke="#c8a95b" stroke-width="1.3" fill="rgba(200,169,91,0.06)"/>
+        <rect x="24" y="24" width="16" height="16" rx="3" stroke="#c8a95b" stroke-width="1.3" fill="rgba(200,169,91,0.1)"/>
+        <circle cx="32" cy="32" r="4" stroke="#c8a95b" stroke-width="1.1" fill="rgba(200,169,91,0.15)"/>
+        <path d="M30 32l1.5 1.5L34 30" stroke="#c8a95b" stroke-width="1.1" stroke-linecap="round"/>
+      </svg>
+      <h3 class="svc-name">Social Posts</h3>
+      <p class="svc-desc">Static and motion graphics that build a cohesive brand presence. Designed for thumb-stopping impact and platform-specific performance.</p>
+      <ul class="svc-list">
+        <li>Feed Carousels &amp; Single Posts</li>
+        <li>Story Templates</li>
+        <li>Motion Graphic Posts</li>
+        <li>Infographics &amp; Data Viz</li>
+        <li>Campaign Content Calendars</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWREEL -->
+<section id="reel">
+  <div class="lbl rv">Showreel 2025</div>
+  <div class="reel-box rv rv-d1">
+    <div class="reel-lines"></div>
+    <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:.2" viewBox="0 0 1200 520" fill="none" preserveAspectRatio="xMidYMid slice">
+      <rect x="40" y="40" width="1120" height="440" rx="4" stroke="rgba(200,169,91,0.3)" stroke-width="1"/>
+      <line x1="0" y1="130" x2="1200" y2="130" stroke="rgba(200,169,91,0.1)" stroke-width="1"/>
+      <line x1="0" y1="390" x2="1200" y2="390" stroke="rgba(200,169,91,0.1)" stroke-width="1"/>
+      <text x="50" y="122" font-family="monospace" font-size="11" fill="rgba(200,169,91,0.4)">01:00:00:00</text>
+      <text x="50" y="382" font-family="monospace" font-size="11" fill="rgba(200,169,91,0.4)">HALF BAKED STUDIO · SHOWREEL 2025</text>
+      <circle cx="600" cy="260" r="120" stroke="rgba(200,169,91,0.12)" stroke-width="1"/>
+      <circle cx="600" cy="260" r="80" stroke="rgba(200,169,91,0.08)" stroke-width="1"/>
+    </svg>
+    <div class="reel-center">
+      <div class="reel-play">
+        <svg width="20" height="22" viewBox="0 0 20 22" fill="none"><path d="M2 2L18 11L2 20V2Z" stroke="#c8a95b" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      </div>
+      <p style="font-size:.6rem;letter-spacing:.3em;color:var(--muted);text-transform:uppercase">Play Showreel · 3:42</p>
+    </div>
+    <div class="reel-title">SHOWREEL</div>
+    <div class="reel-tag">Half Baked Studio © 2025</div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section id="work">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:48px" class="rv">
+    <div>
+      <div class="lbl" style="margin-bottom:16px">Selected Work</div>
+      <h2 class="sec-title rv-d1">Things we've<br><em>cooked up</em></h2>
+    </div>
+    <div class="work-filter">
+      <button class="wf-btn active">All</button>
+      <button class="wf-btn">Ad Films</button>
+      <button class="wf-btn">Reels</button>
+      <button class="wf-btn">Short Films</button>
+      <button class="wf-btn">Social</button>
+    </div>
+  </div>
+  <div class="work-grid">
+    <div class="w-item rv rv-d1">
+      <div class="w-visual" style="background:linear-gradient(135deg,#12161f,#1b2133)">
+        <svg width="100%" height="100%" viewBox="0 0 640 360" fill="none" style="position:absolute;inset:0">
+          <circle cx="320" cy="180" r="100" stroke="rgba(200,169,91,0.1)" stroke-width="1"/>
+          <circle cx="320" cy="180" r="60" stroke="rgba(200,169,91,0.15)" stroke-width="1"/>
+          <rect x="260" y="130" width="120" height="100" rx="6" stroke="rgba(200,169,91,0.28)" stroke-width="1.2" fill="rgba(200,169,91,0.04)"/>
+          <path d="M295 155l50 25-50 25V155z" stroke="rgba(200,169,91,0.55)" stroke-width="1.2" stroke-linejoin="round" fill="rgba(200,169,91,0.1)"/>
+          <text x="20" y="340" font-family="'Bebas Neue',sans-serif" font-size="18" fill="rgba(200,169,91,0.06)" letter-spacing="8">BRAND LAUNCH FILM</text>
+        </svg>
+        <span class="w-tag">Ad Film</span>
+      </div>
+      <div class="w-overlay"><div class="w-info"><div class="w-cat">Ad Film · 2024</div><h3>Brand Launch Campaign</h3></div></div>
+    </div>
+    <div class="w-item rv rv-d2">
+      <div class="w-visual" style="background:linear-gradient(135deg,#1a1210,#2a1a14)">
+        <svg width="100%" height="100%" viewBox="0 0 320 270" fill="none" style="position:absolute;inset:0">
+          <rect x="70" y="30" width="180" height="210" rx="16" stroke="rgba(200,169,91,0.25)" stroke-width="1.2" fill="rgba(200,169,91,0.04)"/>
+          <rect x="90" y="52" width="140" height="118" rx="6" stroke="rgba(200,169,91,0.18)" stroke-width="1" fill="rgba(200,169,91,0.03)"/>
+          <path d="M135 106l28 14-28 14V106z" stroke="rgba(200,169,91,0.55)" stroke-width="1.2" stroke-linejoin="round"/>
+          <rect x="90" y="186" width="50" height="6" rx="3" fill="rgba(200,169,91,0.2)"/>
+          <circle cx="160" cy="220" r="5" fill="rgba(200,169,91,0.3)"/>
+        </svg>
+        <span class="w-tag">Reel</span>
+      </div>
+      <div class="w-overlay"><div class="w-info"><div class="w-cat">Instagram Reel · 2024</div><h3>D2C Product Reel</h3></div></div>
+    </div>
+    <div class="w-item rv rv-d3">
+      <div class="w-visual" style="background:linear-gradient(135deg,#101a14,#152218)">
+        <svg width="100%" height="100%" viewBox="0 0 320 270" fill="none" style="position:absolute;inset:0">
+          <circle cx="160" cy="135" r="70" stroke="rgba(200,169,91,0.1)" stroke-width="1"/>
+          <path d="M80 200 Q160 90 240 200" stroke="rgba(200,169,91,0.22)" stroke-width="1.2" fill="none"/>
+          <line x1="60" y1="200" x2="260" y2="200" stroke="rgba(200,169,91,0.12)" stroke-width="1"/>
+          <circle cx="160" cy="100" r="18" stroke="rgba(200,169,91,0.4)" stroke-width="1.2" fill="rgba(200,169,91,0.06)"/>
+          <path d="M152 100l6 3-6 3v-6z" fill="rgba(200,169,91,0.5)"/>
+          <text x="60" y="248" font-family="'DM Mono',monospace" font-size="7" fill="rgba(200,169,91,0.15)" letter-spacing="3">SHORT FILM</text>
+        </svg>
+        <span class="w-tag">Short Film</span>
+      </div>
+      <div class="w-overlay"><div class="w-info"><div class="w-cat">Short Film · 2024</div><h3>Narrative Short</h3></div></div>
+    </div>
+    <div class="w-item rv rv-d1">
+      <div class="w-visual" style="background:linear-gradient(135deg,#18101e,#241228)">
+        <svg width="100%" height="100%" viewBox="0 0 320 270" fill="none" style="position:absolute;inset:0">
+          <rect x="40" y="40" width="240" height="190" rx="6" stroke="rgba(200,169,91,0.18)" stroke-width="1" fill="rgba(200,169,91,0.03)"/>
+          <rect x="60" y="56" width="100" height="80" rx="4" stroke="rgba(200,169,91,0.25)" stroke-width="1" fill="rgba(200,169,91,0.04)"/>
+          <rect x="176" y="56" width="88" height="36" rx="4" stroke="rgba(200,169,91,0.2)" stroke-width="1" fill="rgba(200,169,91,0.04)"/>
+          <rect x="176" y="100" width="88" height="36" rx="4" stroke="rgba(200,169,91,0.2)" stroke-width="1" fill="rgba(200,169,91,0.04)"/>
+          <rect x="60" y="150" width="204" height="14" rx="4" fill="rgba(200,169,91,0.08)"/>
+          <rect x="60" y="172" width="140" height="14" rx="4" fill="rgba(200,169,91,0.05)"/>
+        </svg>
+        <span class="w-tag">Social</span>
+      </div>
+      <div class="w-overlay"><div class="w-info"><div class="w-cat">Social Campaign · 2024</div><h3>Feed Campaign Series</h3></div></div>
+    </div>
+    <div class="w-item rv rv-d2">
+      <div class="w-visual" style="background:linear-gradient(135deg,#0e1620,#14202e)">
+        <svg width="100%" height="100%" viewBox="0 0 320 270" fill="none" style="position:absolute;inset:0">
+          <rect x="40" y="50" width="240" height="170" rx="8" stroke="rgba(200,169,91,0.2)" stroke-width="1.2" fill="rgba(200,169,91,0.03)"/>
+          <circle cx="160" cy="100" r="28" stroke="rgba(200,169,91,0.35)" stroke-width="1.2" fill="rgba(200,169,91,0.05)"/>
+          <circle cx="160" cy="100" r="10" stroke="rgba(200,169,91,0.5)" stroke-width="1" fill="rgba(200,169,91,0.1)"/>
+          <rect x="60" y="148" width="200" height="3" rx="2" fill="rgba(200,169,91,0.06)"/>
+          <rect x="60" y="148" width="130" height="3" rx="2" fill="rgba(200,169,91,0.3)"/>
+          <circle cx="56" cy="149.5" r="5" fill="rgba(200,169,91,0.5)"/>
+          <text x="60" y="188" font-family="'DM Mono',monospace" font-size="7" fill="rgba(200,169,91,0.18)" letter-spacing="3">CORPORATE FILM</text>
+        </svg>
+        <span class="w-tag">Corporate</span>
+      </div>
+      <div class="w-overlay"><div class="w-info"><div class="w-cat">Corporate Film · 2024</div><h3>Brand Story</h3></div></div>
+    </div>
+    <div class="w-item rv rv-d3">
+      <div class="w-visual" style="background:linear-gradient(135deg,#1c1810,#2a2214)">
+        <svg width="100%" height="100%" viewBox="0 0 320 270" fill="none" style="position:absolute;inset:0">
+          <rect x="80" y="30" width="160" height="210" rx="14" stroke="rgba(200,169,91,0.22)" stroke-width="1.2" fill="rgba(200,169,91,0.04)"/>
+          <rect x="96" y="50" width="128" height="150" rx="8" stroke="rgba(200,169,91,0.16)" stroke-width="1" fill="rgba(200,169,91,0.03)"/>
+          <circle cx="160" cy="235" r="6" fill="rgba(200,169,91,0.25)"/>
+          <path d="M132 120l24 12-24 12V120z" stroke="rgba(200,169,91,0.6)" stroke-width="1.2" stroke-linejoin="round" fill="rgba(200,169,91,0.12)"/>
+        </svg>
+        <span class="w-tag">Reel</span>
+      </div>
+      <div class="w-overlay"><div class="w-info"><div class="w-cat">YouTube Short · 2024</div><h3>Product Demo Short</h3></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE PROCESS -->
+<div class="marquee-outer">
+  <div class="marquee-track" id="marq">
+    <div class="m-item"><div class="m-item-n">01</div><div><h3>Discovery</h3><p>Briefing &amp; strategy</p></div></div>
+    <div class="m-item"><div class="m-item-n">02</div><div><h3>Concept</h3><p>Script &amp; storyboard</p></div></div>
+    <div class="m-item"><div class="m-item-n">03</div><div><h3>Pre-Production</h3><p>Casting &amp; location</p></div></div>
+    <div class="m-item"><div class="m-item-n">04</div><div><h3>Production</h3><p>Shoot day</p></div></div>
+    <div class="m-item"><div class="m-item-n">05</div><div><h3>Post Production</h3><p>Edit, grade, sound</p></div></div>
+    <div class="m-item"><div class="m-item-n">06</div><div><h3>Delivery</h3><p>Platform export</p></div></div>
+    <div class="m-item"><div class="m-item-n">01</div><div><h3>Discovery</h3><p>Briefing &amp; strategy</p></div></div>
+    <div class="m-item"><div class="m-item-n">02</div><div><h3>Concept</h3><p>Script &amp; storyboard</p></div></div>
+    <div class="m-item"><div class="m-item-n">03</div><div><h3>Pre-Production</h3><p>Casting &amp; location</p></div></div>
+    <div class="m-item"><div class="m-item-n">04</div><div><h3>Production</h3><p>Shoot day</p></div></div>
+    <div class="m-item"><div class="m-item-n">05</div><div><h3>Post Production</h3><p>Edit, grade, sound</p></div></div>
+    <div class="m-item"><div class="m-item-n">06</div><div><h3>Delivery</h3><p>Platform export</p></div></div>
+  </div>
+</div>
+
+<!-- PROCESS DETAIL -->
+<section id="process">
+  <div class="lbl rv">How We Work</div>
+  <h2 class="sec-title rv rv-d1">A process as<br><em>precise</em> as the lens</h2>
+  <div class="proc-grid">
+    <div class="proc-step rv rv-d1">
+      <span class="proc-arrow">›</span>
+      <div class="proc-n">01</div>
+      <h3 class="proc-title">Discovery</h3>
+      <p class="proc-desc">Deep-dive into your brand, audience, goals and competition. No guesswork — just clarity before a single frame is captured.</p>
+    </div>
+    <div class="proc-step rv rv-d2">
+      <span class="proc-arrow">›</span>
+      <div class="proc-n">02</div>
+      <h3 class="proc-title">Concept &amp; Script</h3>
+      <p class="proc-desc">Story first. We develop the concept, write the script and build a storyboard so you can visualise the film before we shoot.</p>
+    </div>
+    <div class="proc-step rv rv-d3">
+      <span class="proc-arrow">›</span>
+      <div class="proc-n">03</div>
+      <h3 class="proc-title">Pre-Production</h3>
+      <p class="proc-desc">Casting, location scouting, scheduling, equipment prep and shot-listing. Every detail locked before shoot day.</p>
+    </div>
+    <div class="proc-step rv rv-d4">
+      <span class="proc-arrow">›</span>
+      <div class="proc-n">04</div>
+      <h3 class="proc-title">Production</h3>
+      <p class="proc-desc">Shoot day. Our crew works quickly and precisely, capturing everything in the storyboard — and the magic that wasn't planned.</p>
+    </div>
+    <div class="proc-step rv rv-d4">
+      <div class="proc-n">05</div>
+      <h3 class="proc-title">Post &amp; Delivery</h3>
+      <p class="proc-desc">Editing, color grading, sound design, VFX and motion graphics. Optimised exports for every platform — from cinema to Stories.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="why-grid">
+    <div>
+      <div class="lbl rv">Why Half Baked</div>
+      <h2 class="sec-title rv rv-d1">We don't just<br>shoot — we<br><em>tell stories</em></h2>
+      <div class="why-list" style="margin-top:48px">
+        <div class="why-item rv rv-d1">
+          <div class="wi-num">i.</div>
+          <div class="wi-body">
+            <h4>Strategy-Led Creative</h4>
+            <p>Every decision — camera angle, colour grade, music — serves your business goal. Beautiful films that don't convert are just expensive screensavers.</p>
+          </div>
+        </div>
+        <div class="why-item rv rv-d2">
+          <div class="wi-num">ii.</div>
+          <div class="wi-body">
+            <h4>Platform-Native Expertise</h4>
+            <p>We understand the algorithm as well as the aperture. Our reels are built for the feed — hook in the first 0.5 seconds, optimised for muted playback.</p>
+          </div>
+        </div>
+        <div class="why-item rv rv-d3">
+          <div class="wi-num">iii.</div>
+          <div class="wi-body">
+            <h4>End-to-End Under One Roof</h4>
+            <p>Script to delivery. No outsourcing. Your single point of contact manages the entire pipeline so nothing gets lost in translation.</p>
+          </div>
+        </div>
+        <div class="why-item rv rv-d4">
+          <div class="wi-num">iv.</div>
+          <div class="wi-body">
+            <h4>Delhi-Based, India-Ready</h4>
+            <p>We know the local landscape — locations, talent, regulations — and have the network to execute anywhere across India, fast.</p>
+          </div>
+        </div>
+        <div class="why-item rv rv-d4">
+          <div class="wi-num">v.</div>
+          <div class="wi-body">
+            <h4>Transparent, Honest Pricing</h4>
+            <p>No hidden costs, no surprise invoices. We provide detailed breakdowns upfront so you can budget confidently from day one.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="why-visual-area rv rv-d2">
+      <svg viewBox="0 0 440 500" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:400px">
+        <circle cx="220" cy="250" r="190" stroke="rgba(200,169,91,0.07)" stroke-width="1"/>
+        <circle cx="220" cy="250" r="140" stroke="rgba(200,169,91,0.1)" stroke-width="1"/>
+        <circle cx="220" cy="250" r="90" stroke="rgba(200,169,91,0.14)" stroke-width="1"/>
+        <line x1="220" y1="60" x2="220" y2="250" stroke="rgba(200,169,91,0.08)" stroke-width="1"/>
+        <line x1="220" y1="250" x2="380" y2="340" stroke="rgba(200,169,91,0.08)" stroke-width="1"/>
+        <line x1="220" y1="250" x2="300" y2="420" stroke="rgba(200,169,91,0.08)" stroke-width="1"/>
+        <line x1="220" y1="250" x2="140" y2="420" stroke="rgba(200,169,91,0.08)" stroke-width="1"/>
+        <line x1="220" y1="250" x2="60" y2="340" stroke="rgba(200,169,91,0.08)" stroke-width="1"/>
+        <circle cx="220" cy="250" r="36" stroke="rgba(200,169,91,0.5)" stroke-width="1.5" fill="rgba(200,169,91,0.06)"/>
+        <text x="208" y="256" font-family="'Bebas Neue',sans-serif" font-size="14" fill="rgba(200,169,91,0.7)" letter-spacing="2">HBS</text>
+        <circle cx="220" cy="60" r="22" stroke="rgba(200,169,91,0.4)" stroke-width="1.2" fill="rgba(200,169,91,0.06)"/>
+        <text x="205" y="63" font-family="'DM Mono',monospace" font-size="6.5" fill="rgba(200,169,91,0.6)" letter-spacing="1">STRTGY</text>
+        <circle cx="380" cy="340" r="22" stroke="rgba(200,169,91,0.4)" stroke-width="1.2" fill="rgba(200,169,91,0.06)"/>
+        <text x="366" y="343" font-family="'DM Mono',monospace" font-size="6.5" fill="rgba(200,169,91,0.6)" letter-spacing="1">PLATF.</text>
+        <circle cx="300" cy="420" r="22" stroke="rgba(200,169,91,0.4)" stroke-width="1.2" fill="rgba(200,169,91,0.06)"/>
+        <text x="289" y="423" font-family="'DM Mono',monospace" font-size="6.5" fill="rgba(200,169,91,0.6)" letter-spacing="1">FULL</text>
+        <circle cx="140" cy="420" r="22" stroke="rgba(200,169,91,0.4)" stroke-width="1.2" fill="rgba(200,169,91,0.06)"/>
+        <text x="131" y="423" font-family="'DM Mono',monospace" font-size="6.5" fill="rgba(200,169,91,0.6)" letter-spacing="1">LOCAL</text>
+        <circle cx="60" cy="340" r="22" stroke="rgba(200,169,91,0.4)" stroke-width="1.2" fill="rgba(200,169,91,0.06)"/>
+        <text x="51" y="343" font-family="'DM Mono',monospace" font-size="6.5" fill="rgba(200,169,91,0.6)" letter-spacing="1">PRICE</text>
+        <text x="196" y="34" font-family="'DM Mono',monospace" font-size="7" fill="rgba(200,169,91,0.35)" text-anchor="middle">Strategy</text>
+        <text x="402" y="335" font-family="'DM Mono',monospace" font-size="7" fill="rgba(200,169,91,0.35)">Platform</text>
+        <text x="288" y="462" font-family="'DM Mono',monospace" font-size="7" fill="rgba(200,169,91,0.35)" text-anchor="middle">Full-Service</text>
+        <text x="140" y="462" font-family="'DM Mono',monospace" font-size="7" fill="rgba(200,169,91,0.35)" text-anchor="middle">Delhi-Based</text>
+        <text x="18" y="335" font-family="'DM Mono',monospace" font-size="7" fill="rgba(200,169,91,0.35)">Pricing</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- FORMATS -->
+<section id="formats">
+  <div class="lbl rv">Delivery Formats</div>
+  <h2 class="sec-title rv rv-d1">Every format,<br><em>every platform</em></h2>
+  <div class="fmt-grid">
+    <div class="fmt-card rv rv-d1">
+      <svg style="margin-bottom:24px" width="52" height="36" viewBox="0 0 52 36" fill="none">
+        <rect x="1" y="1" width="50" height="34" rx="3" stroke="#c8a95b" stroke-width="1.3"/>
+        <rect x="6" y="6" width="40" height="24" rx="2" stroke="rgba(200,169,91,0.35)" stroke-width="1"/>
+        <circle cx="26" cy="18" r="5" stroke="rgba(200,169,91,0.5)" stroke-width="1"/>
+      </svg>
+      <div class="fmt-sub">Widescreen</div>
+      <h3 class="fmt-title">Film &amp; Cinema</h3>
+      <p class="fmt-desc">Cinematic 16:9 and 2.39:1 formats for TVCs, YouTube hero content and OTT platforms. DCI 4K, UHD, or custom spec to match broadcast requirements.</p>
+      <div class="fmt-specs">
+        <div class="fmt-spec"><span>Aspect Ratio</span><span>16:9 / 2.39:1</span></div>
+        <div class="fmt-spec"><span>Resolution</span><span>4K UHD / DCI</span></div>
+        <div class="fmt-spec"><span>Frame Rate</span><span>24 / 25 / 30 fps</span></div>
+        <div class="fmt-spec"><span>Codec</span><span>H.264 / ProRes</span></div>
+      </div>
+    </div>
+    <div class="fmt-card rv rv-d2">
+      <svg style="margin-bottom:24px" width="28" height="48" viewBox="0 0 28 48" fill="none">
+        <rect x="1" y="1" width="26" height="46" rx="4" stroke="#c8a95b" stroke-width="1.3"/>
+        <rect x="5" y="6" width="18" height="32" rx="2" stroke="rgba(200,169,91,0.35)" stroke-width="1"/>
+        <circle cx="14" cy="22" r="4" stroke="rgba(200,169,91,0.5)" stroke-width="1"/>
+        <circle cx="14" cy="44" r="2" fill="rgba(200,169,91,0.35)"/>
+      </svg>
+      <div class="fmt-sub">Vertical</div>
+      <h3 class="fmt-title">Reels &amp; Shorts</h3>
+      <p class="fmt-desc">9:16 vertical-first content for Instagram Reels, YouTube Shorts and Stories. Engineered for muted autoplay and algorithm discovery.</p>
+      <div class="fmt-specs">
+        <div class="fmt-spec"><span>Aspect Ratio</span><span>9:16</span></div>
+        <div class="fmt-spec"><span>Resolution</span><span>1080×1920</span></div>
+        <div class="fmt-spec"><span>Frame Rate</span><span>30 / 60 fps</span></div>
+        <div class="fmt-spec"><span>Duration</span><span>7s – 90s</span></div>
+      </div>
+    </div>
+    <div class="fmt-card rv rv-d3">
+      <svg style="margin-bottom:24px" width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <rect x="1" y="1" width="42" height="42" rx="4" stroke="#c8a95b" stroke-width="1.3"/>
+        <rect x="6" y="6" width="32" height="32" rx="2" stroke="rgba(200,169,91,0.35)" stroke-width="1"/>
+        <circle cx="22" cy="22" r="6" stroke="rgba(200,169,91,0.5)" stroke-width="1"/>
+        <circle cx="22" cy="22" r="2.5" fill="rgba(200,169,91,0.25)"/>
+      </svg>
+      <div class="fmt-sub">Square &amp; Portrait</div>
+      <h3 class="fmt-title">Social Posts</h3>
+      <p class="fmt-desc">1:1 square and 4:5 portrait formats optimised for Instagram feed, Facebook ads and LinkedIn. Maximum visual space on mobile viewports.</p>
+      <div class="fmt-specs">
+        <div class="fmt-spec"><span>Square</span><span>1080×1080</span></div>
+        <div class="fmt-spec"><span>Portrait</span><span>1080×1350</span></div>
+        <div class="fmt-spec"><span>Stories</span><span>1080×1920</span></div>
+        <div class="fmt-spec"><span>File Type</span><span>MP4 / JPG / PNG</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GEAR -->
+<section id="gear">
+  <div class="lbl rv">Our Capabilities</div>
+  <h2 class="sec-title rv rv-d1">Professional <em>kit</em>,<br>professional results</h2>
+  <div class="gear-grid">
+    <div class="gear-card rv rv-d1">
+      <div class="gear-cat">Camera</div>
+      <div class="gear-items">
+        <div class="gear-item"><span class="gear-dot"></span>Sony FX3 / FX6 Cinema Line</div>
+        <div class="gear-item"><span class="gear-dot"></span>Blackmagic Pocket 6K Pro</div>
+        <div class="gear-item"><span class="gear-dot"></span>Canon EOS R5 / R6 II</div>
+        <div class="gear-item"><span class="gear-dot"></span>DJI Ronin 4D</div>
+        <div class="gear-item"><span class="gear-dot"></span>GoPro Hero 12 (Action)</div>
+      </div>
+    </div>
+    <div class="gear-card rv rv-d2">
+      <div class="gear-cat">Movement</div>
+      <div class="gear-items">
+        <div class="gear-item"><span class="gear-dot"></span>DJI RS3 Pro Gimbal</div>
+        <div class="gear-item"><span class="gear-dot"></span>DJI Mavic 3 Pro (Drone)</div>
+        <div class="gear-item"><span class="gear-dot"></span>Dana Dolly + Track</div>
+        <div class="gear-item"><span class="gear-dot"></span>Slider 100cm Carbon</div>
+        <div class="gear-item"><span class="gear-dot"></span>Jib Arm</div>
+      </div>
+    </div>
+    <div class="gear-card rv rv-d3">
+      <div class="gear-cat">Lighting</div>
+      <div class="gear-items">
+        <div class="gear-item"><span class="gear-dot"></span>Aputure 300d II</div>
+        <div class="gear-item"><span class="gear-dot"></span>Nanlite Forza 500B II</div>
+        <div class="gear-item"><span class="gear-dot"></span>Godox SL200 Bi-Colour</div>
+        <div class="gear-item"><span class="gear-dot"></span>LED Panel Arrays</div>
+        <div class="gear-item"><span class="gear-dot"></span>Practicals &amp; RGB Accent</div>
+      </div>
+    </div>
+    <div class="gear-card rv rv-d4">
+      <div class="gear-cat">Post Production</div>
+      <div class="gear-items">
+        <div class="gear-item"><span class="gear-dot"></span>DaVinci Resolve Studio 19</div>
+        <div class="gear-item"><span class="gear-dot"></span>Adobe Premiere Pro</div>
+        <div class="gear-item"><span class="gear-dot"></span>Adobe After Effects</div>
+        <div class="gear-item"><span class="gear-dot"></span>Audition (Sound Design)</div>
+        <div class="gear-item"><span class="gear-dot"></span>Photoshop / Illustrator</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="sb-item rv"><div class="sb-n">50+</div><div class="sb-lbl">Projects Delivered</div></div>
+  <div class="sb-item rv rv-d1"><div class="sb-n">30+</div><div class="sb-lbl">Brand Partners</div></div>
+  <div class="sb-item rv rv-d2"><div class="sb-n">4K</div><div class="sb-lbl">Max Resolution</div></div>
+  <div class="sb-item rv rv-d3"><div class="sb-n">100%</div><div class="sb-lbl">Client Satisfaction</div></div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="lbl rv">Client Stories</div>
+  <h2 class="sec-title rv rv-d1">What our partners<br><em>say about us</em></h2>
+  <div class="test-grid">
+    <div class="test-card rv rv-d1">
+      <p class="test-quote">Half Baked Studio understood our brand better than we did. The ad film drove a 40% jump in conversions in the first week. Cinematic but perfectly on-brand.</p>
+      <div class="test-author">
+        <div class="test-ava">R</div>
+        <div><div class="test-name">Rahul Sharma</div><div class="test-co">Founder, D2C Lifestyle Brand · Delhi</div></div>
+      </div>
+    </div>
+    <div class="test-card rv rv-d2">
+      <p class="test-quote">The reels they created for our product launch hit 1.2M views organically. They know exactly how to hook an audience in the first frame. Fast, professional, genuinely creative.</p>
+      <div class="test-author">
+        <div class="test-ava">P</div>
+        <div><div class="test-name">Priya Mehta</div><div class="test-co">Marketing Head, Beauty Brand · Mumbai</div></div>
+      </div>
+    </div>
+    <div class="test-card rv rv-d3">
+      <p class="test-quote">We needed a short film that told our brand's origin story. Arjit and the team treated it like a feature — meticulous, patient and visually stunning. Nothing less than exceptional.</p>
+      <div class="test-author">
+        <div class="test-ava">V</div>
+        <div><div class="test-name">Vikram Singh</div><div class="test-co">Co-founder, Artisan Food Co. · Jaipur</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="ct-left">
+    <div class="lbl rv">Get In Touch</div>
+    <p class="big rv rv-d1">Let's make<br>something<br><em>extraordinary.</em></p>
+    <div class="ct-detail">
+      <div class="ct-row rv rv-d2">
+        <div class="ct-lbl">Email</div>
+        <a href="mailto:halfbaked.mainn@gmail.com">halfbaked.mainn@gmail.com</a>
+      </div>
+      <div class="ct-row rv rv-d3">
+        <div class="ct-lbl">Studio Address</div>
+        <span>R-10, Ansal Chamber-2,<br>Bhikaji Cama Place, New Delhi</span>
+      </div>
+      <div class="ct-row rv rv-d4">
+        <div class="ct-lbl">Partner</div>
+        <span>Arjit Jha</span>
+      </div>
+    </div>
+    <div class="working-hrs rv rv-d4">
+      <div class="wh-title">Working Hours</div>
+      <div class="wh-row"><span>Monday – Friday</span><span>10:00 – 19:00 IST</span></div>
+      <div class="wh-row"><span>Saturday</span><span>11:00 – 16:00 IST</span></div>
+      <div class="wh-row"><span>Sunday</span><span>By Appointment</span></div>
+    </div>
+  </div>
+  <div class="ct-form rv rv-d2">
+    <div class="fg-row">
+      <div class="fg"><label>Your Name</label><input type="text" placeholder="Full name"></div>
+      <div class="fg"><label>Email</label><input type="email" placeholder="your@email.com"></div>
+    </div>
+    <div class="fg-row">
+      <div class="fg"><label>Phone</label><input type="tel" placeholder="+91 XXXXX XXXXX"></div>
+      <div class="fg"><label>Company / Brand</label><input type="text" placeholder="Brand name (optional)"></div>
+    </div>
+    <div class="fg">
+      <label>Service Required</label>
+      <select>
+        <option value="">Select a service</option>
+        <option>Ad Film / TVC</option>
+        <option>Instagram Reel / YouTube Short</option>
+        <option>Short Film</option>
+        <option>Social Posts / Carousels</option>
+        <option>Corporate Film</option>
+        <option>Music Video</option>
+        <option>Full Production Package</option>
+        <option>Post Production Only</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Estimated Budget</label>
+      <select>
+        <option value="">Select budget range</option>
+        <option>Under ₹50,000</option>
+        <option>₹50,000 – ₹1,50,000</option>
+        <option>₹1,50,000 – ₹5,00,000</option>
+        <option>₹5,00,000 – ₹15,00,000</option>
+        <option>₹15,00,000+</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Project Brief</label>
+      <textarea placeholder="Tell us about your project — what are you making, who is it for, and what do you want it to achieve?"></textarea>
+    </div>
+    <div class="fg"><label>Timeline</label><input type="text" placeholder="e.g. Need delivery by 15 May 2025"></div>
+    <button class="btn-submit" type="button">Send Brief →</button>
+  </div>
+</section>
+
+<footer>
+  <div class="f-logo">Half Baked Studio</div>
+  <div class="f-copy">© 2025 Half Baked Studios Pvt. Ltd. · New Delhi, India</div>
+  <div class="f-links">
+    <a href="#">Instagram</a>
+    <a href="#">YouTube</a>
+    <a href="#">LinkedIn</a>
+    <a href="#">Behance</a>
+  </div>
+</footer>
+
+<script>
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+(function raf(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(raf)})();
+document.querySelectorAll('a,button,.svc-card,.w-item,.fmt-card,.gear-card,.test-card,.proc-step,.why-item,.reel-play,.wf-btn').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hov'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hov'));
+});
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('stuck',scrollY>60));
+const ro=new IntersectionObserver(entries=>entries.forEach(e=>e.isIntersecting&&e.target.classList.add('vis')),{threshold:.1});
+document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+document.querySelectorAll('.wf-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.wf-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+window.addEventListener('scroll',()=>{
+  const t=document.querySelector('.h-title'),s=scrollY;
+  if(t&&s<innerHeight){t.style.transform=`translateY(${s*.2}px)`;t.style.opacity=1-s/(innerHeight*.6);}
+});
+document.getElementById('marq')?.addEventListener('mouseenter',e=>e.target.style.animationPlayState='paused');
+document.getElementById('marq')?.addEventListener('mouseleave',e=>e.target.style.animationPlayState='running');
+</script>
+</body>
+</html>
